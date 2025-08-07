@@ -1,3 +1,122 @@
+// === Imports ===
+import { showBookingOverlay } from "./loggedPatient.js";
+import { deleteDoctor } from "./services/doctorServices.js";
+import { fetchPatientDetails } from "./services/patientServices.js";
+
+// === Hlavní funkce ===
+export function createDoctorCard(doctor) {
+  // Hlavní obal karty
+  const doctorCard = document.createElement("div");
+  doctorCard.classList.add("doctor-card");
+
+  // Role a token
+  const role = localStorage.getItem("userRole");
+  const token = localStorage.getItem("token");
+
+  // === Informace o lékaři ===
+  const infoDiv = document.createElement("div");
+  infoDiv.classList.add("doctor-info");
+
+  const name = document.createElement("h3");
+  name.textContent = `Dr. ${doctor.name}`;
+
+  const specialization = document.createElement("p");
+  specialization.textContent = `Specialization: ${doctor.specialization}`;
+
+  const email = document.createElement("p");
+  email.textContent = `Email: ${doctor.email}`;
+
+  // Volitelné: dostupné časy
+  const times = document.createElement("ul");
+  times.classList.add("availability-list");
+  if (doctor.availableTimes && doctor.availableTimes.length) {
+    doctor.availableTimes.forEach(slot => {
+      const li = document.createElement("li");
+      li.textContent = `${slot.date} (${slot.from} - ${slot.to})`;
+      times.appendChild(li);
+    });
+  }
+
+  // Přidání do info sekce
+  infoDiv.append(name, specialization, email, times);
+
+  // === Akční tlačítka ===
+  const actionsDiv = document.createElement("div");
+  actionsDiv.classList.add("doctor-actions");
+
+  // --- ADMIN ---
+  if (role === "admin") {
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.classList.add("adminBtn", "delete-btn");
+
+    deleteBtn.addEventListener("click", async () => {
+      const confirmDelete = confirm(`Are you sure you want to delete Dr. ${doctor.name}?`);
+      if (!confirmDelete) return;
+
+      const adminToken = token; // assumed valid if role is admin
+      try {
+        const success = await deleteDoctor(doctor.id, adminToken);
+        if (success) {
+          doctorCard.remove();
+          alert("Doctor deleted successfully.");
+        } else {
+          alert("Failed to delete doctor.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error deleting doctor.");
+      }
+    });
+
+    actionsDiv.appendChild(deleteBtn);
+  }
+
+  // --- ANONYMNÍ PACIENT ---
+  else if (role === "patient" || !token) {
+    const bookBtn = document.createElement("button");
+    bookBtn.textContent = "Book Now";
+    bookBtn.classList.add("book-btn");
+
+    bookBtn.addEventListener("click", () => {
+      alert("Please log in to book an appointment.");
+      window.location.href = "/"; // or open login modal
+    });
+
+    actionsDiv.appendChild(bookBtn);
+  }
+
+  // --- PŘIHLÁŠENÝ PACIENT ---
+  else if (role === "loggedPatient") {
+    const bookBtn = document.createElement("button");
+    bookBtn.textContent = "Book Now";
+    bookBtn.classList.add("book-btn");
+
+    bookBtn.addEventListener("click", async () => {
+      if (!token) {
+        alert("Token expired. Please log in again.");
+        localStorage.removeItem("userRole");
+        window.location.href = "/";
+        return;
+      }
+
+      try {
+        const patient = await fetchPatientDetails(token);
+        showBookingOverlay({ doctor, patient });
+      } catch (err) {
+        console.error("Error booking:", err);
+        alert("Unable to load patient information.");
+      }
+    });
+
+    actionsDiv.appendChild(bookBtn);
+  }
+
+  // === Složení celé karty ===
+  doctorCard.append(infoDiv, actionsDiv);
+  return doctorCard;
+}
+
 /*
 Import the overlay function for booking appointments from loggedPatient.js
 

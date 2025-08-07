@@ -123,3 +123,70 @@
   16. **Render the Header**: Finally, the `renderHeader()` function is called to initialize the header rendering process when the page loads.
 */
    
+function renderHeader() {
+    const headerDiv = document.getElementById("header");
+  
+    // 1. Pokud jsme na hlavní stránce (např. "/index.html" nebo jen "/")
+    if (window.location.pathname.endsWith("/")) {
+      localStorage.removeItem("userRole");
+      headerDiv.innerHTML = `
+        <header class="header">
+          <div class="logo-section">
+            <img src="../assets/images/logo/logo.png" alt="Hospital CRM Logo" class="logo-img">
+            <span class="logo-title">Hospital CMS</span>
+          </div>
+        </header>`;
+      return;
+    }
+  
+    // 2. Zjisti aktuální roli a token
+    const role = localStorage.getItem("userRole");
+    const token = localStorage.getItem("token");
+  
+    // 3. Základní header HTML
+    let headerContent = `
+      <header class="header">
+        <div class="logo-section">
+          <img src="../assets/images/logo/logo.png" alt="Hospital CRM Logo" class="logo-img">
+          <span class="logo-title">Hospital CMS</span>
+        </div>
+        <nav>`;
+  
+    // 4. Neplatná session (např. chybí token)
+    if ((role === "loggedPatient" || role === "admin" || role === "doctor") && !token) {
+      localStorage.removeItem("userRole");
+      alert("Session expired or invalid login. Please log in again.");
+      window.location.href = "/";
+      return;
+    }
+  
+    // 5. Role-specifický obsah
+    if (role === "admin") {
+      headerContent += `
+        <button id="addDocBtn" class="adminBtn" onclick="openModal('addDoctor')">Add Doctor</button>
+        <a href="#" onclick="logout()">Logout</a>`;
+    } else if (role === "doctor") {
+      headerContent += `
+        <button class="adminBtn" onclick="selectRole('doctor')">Home</button>
+        <a href="#" onclick="logout()">Logout</a>`;
+    } else if (role === "patient") {
+      headerContent += `
+        <button id="patientLogin" class="adminBtn">Login</button>
+        <button id="patientSignup" class="adminBtn">Sign Up</button>`;
+    } else if (role === "loggedPatient") {
+      headerContent += `
+        <button class="adminBtn" onclick="window.location.href='/pages/loggedPatientDashboard.html'">Home</button>
+        <button class="adminBtn" onclick="window.location.href='/pages/patientAppointments.html'">Appointments</button>
+        <a href="#" onclick="logoutPatient()">Logout</a>`;
+    }
+  
+    // 6. Uzavři navigaci a header
+    headerContent += `</nav></header>`;
+  
+    // 7. Vlož HTML do DOM
+    headerDiv.innerHTML = headerContent;
+  
+    // 8. Navěs posluchače na nově vytvořená tlačítka
+    attachHeaderButtonListeners();
+  }
+  
