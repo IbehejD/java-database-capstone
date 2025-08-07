@@ -31,7 +31,7 @@ public class Doctor {
 
     @NotNull
     @Size(min=3, max = 100)
-    private String speciality;
+    private String specialty;
 
     @NotNull
     @Email
@@ -49,13 +49,13 @@ public class Doctor {
     @ElementCollection
     private List<String> availableTimes;
 
-    public Doctor(String email, Long id, String name, String password, String phone, String speciality) {
+    public Doctor(String email, Long id, String name, String password, String phone, String specialty) {
         this.email = email;
         this.id = id;
         this.name = name;
         this.password = password;
         this.phone = phone;
-        this.speciality = speciality;
+        this.specialty = specialty;
     }
 
     public Long getId() {
@@ -74,12 +74,12 @@ public class Doctor {
         this.name = name;
     }
 
-    public String getSpeciality() {
-        return speciality;
+    public String getspecialty() {
+        return specialty;
     }
 
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
+    public void setspecialty(String specialty) {
+        this.specialty = specialty;
     }
 
     public String getEmail() {

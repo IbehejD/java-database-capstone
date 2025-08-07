@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "https://u217250-8080.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai")
 @RestController
 @RequestMapping("${api.path}" + "doctor")
 public class DoctorController {
@@ -121,11 +122,11 @@ public class DoctorController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 409 Conflict
     }
 
-    @GetMapping("/filter/{name}/{time}/{speciality}")
+    @GetMapping("/filter/{name}/{time}/{specialty}")
     public ResponseEntity<Map<String, Object>> filter(@PathVariable String name, @PathVariable String time,
-            @PathVariable String speciality) {
+            @PathVariable String specialty) {
         Map<String, Object> map = new HashMap<>();
-        map = service.filterDoctor(name, speciality, time);
+        map = service.filterDoctor(name, specialty, time);
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
