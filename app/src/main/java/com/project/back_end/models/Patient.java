@@ -1,8 +1,16 @@
 package com.project.back_end.models;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 
 @Entity
 public class Patient {
@@ -32,7 +40,15 @@ public class Patient {
     @Size(max = 255, message = "Address must not exceed 255 characters")
     private String address;
 
-
+    public Patient(String address, String email, Long id, String name, String password, String phone) {
+        this.address = address;
+        this.email = email;
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.phone = phone;
+    }
+    
     public Long getId() {
         return id;
     }

@@ -1,5 +1,19 @@
 package com.project.back_end.models;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 @Entity 
 public class Doctor {
 
@@ -8,7 +22,7 @@ public class Doctor {
 //    - Required for persistence frameworks (e.g., Hibernate) to map the class to a database table.
 
     @Id
-    @Generatedvalue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -17,7 +31,7 @@ public class Doctor {
 
     @NotNull
     @Size(min=3, max = 100)
-    private Srting speciality;
+    private String speciality;
 
     @NotNull
     @Email
@@ -35,6 +49,15 @@ public class Doctor {
     @ElementCollection
     private List<String> availableTimes;
 
+    public Doctor(String email, Long id, String name, String password, String phone, String speciality) {
+        this.email = email;
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.phone = phone;
+        this.speciality = speciality;
+    }
+
     public Long getId() {
         return id;
     }
@@ -51,11 +74,11 @@ public class Doctor {
         this.name = name;
     }
 
-    public Srting getSpeciality() {
+    public String getSpeciality() {
         return speciality;
     }
 
-    public void setSpeciality(Srting speciality) {
+    public void setSpeciality(String speciality) {
         this.speciality = speciality;
     }
 

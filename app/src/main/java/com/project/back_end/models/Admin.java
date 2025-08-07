@@ -1,5 +1,14 @@
 package com.project.back_end.models;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+
 @Entity
 public class Admin {
 
@@ -8,12 +17,18 @@ public class Admin {
     private Long id;
 
     @NotNull(message = "username cannot be null")
-    private String name;`s
+    private String username;
 
     @NotNull(message = "password cannot be null")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) 
     private String password;
-    
+
+    public Admin(Long id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
     public Long getId() {
         return id;
     }
@@ -23,11 +38,11 @@ public class Admin {
     }
 
     public String getName() {
-        return name;
+        return username;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.username = username;
     }
 
     public String getPassword() {
